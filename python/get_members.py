@@ -5,7 +5,7 @@ import json
 import os
 import sys
 import time
-from group_members import *
+from fb_objects import *
 
 try:
     from urllib.request import urlopen, Request
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     curr_group = 1
     for group in all_groups_set:
         print("\nScraping group {} out of {}".format(str(curr_group), str(num_groups)))
-        all_members_set = all_members_set.union(set(Group_Members(group, access_token).members))
+        all_members_set = all_members_set.union(set(Group(group, access_token).members))
         print("Number of members collected: {}\n".format(str(len(all_members_set))))
         curr_group += 1
 

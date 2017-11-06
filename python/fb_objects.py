@@ -13,19 +13,42 @@ except ImportError:
 
 from utils import request_until_succeed, unicode_decode
 
+class Edge:
+    def __init__(self, group1, group2, strength):
+        """group1 is the group w the lesser id"""
+        min_id = min(group1.id, group2.id)
+        if min_id == group1.id:
+            self.group1 = group1
+            self.group2 = group2
+        else:
+            self.group1 = group2
+            self.group2 = group1
+
+        self.strength = strength
+        self.id = str(self.group1.id) + "_" + str(self.group2.id) + "_" + str(strength)
+
+    def equals(e):
+        if e.id == self.id:
+            return true
+        
 class Member:
-    def __init__(self, id, name, administrator):
+    def __init__(self, id, name, administrator, groups):
         self.id = id
         self.name = name
         self.administrator = administrator
+        self.groups = groups
 
-class Group_Members:
+class Group:
 
     def __init__(self, group_id, access_token):
-        self.group_id = group_id
+        self.id = group_id
         self.access_token = access_token 
         self.members = []
         self.scrapePageSearch()
+
+    def equals(group):
+        if group.group_id == self.group_id:
+            return true
 
     def getGroupMembersUrl(self):
 
