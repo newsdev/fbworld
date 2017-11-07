@@ -53,11 +53,11 @@ class Group:
     def getGroupMembersUrl(self):
 
         # Construct the URL string; see http://stackoverflow.com/a/37239851 for
-        url = "https://graph.facebook.com/v2.10/{}/members?access_token={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.group_id, self.access_token)
+        url = "https://graph.facebook.com/v2.10/{}/members?access_token={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, self.access_token)
         return url
 
     def scrapePageSearch(self):
-        print("Extracting members of group with id: {}".format(self.group_id)) 
+        print("Extracting members of group with id: {}".format(self.id)) 
         has_next_page = True
         num_processed = 0
         url = self.getGroupMembersUrl()
