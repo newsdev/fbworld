@@ -5,6 +5,7 @@ import os
 from fb_objects import *
 
 access_token = os.environ.get('INDV_ACCESS_TOKEN', None)
+file = sys.argv[1]
 
 """G maps <group_id>:<Group object>"""
 G = {} 
@@ -14,7 +15,7 @@ E_ids = set()
 E = []
 
 def get_members():
-    with open('100001344575026_groups.txt', 'r') as readfile:
+    with open(file, 'r') as readfile:
         data = json.loads(readfile.read())
         return data['data']
 
@@ -73,7 +74,6 @@ if __name__ == '__main__':
     data = {}
     data['groups'] = list(G.keys())
     data['edges'] = list(E_ids)
-    print(data)
 
     with open("graph.json", 'w') as writefile:
         json.dump(data, writefile)
