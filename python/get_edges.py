@@ -14,7 +14,7 @@ E_ids = set()
 E = []
 
 def get_members():
-    with open('some.txt', 'r') as readfile:
+    with open('100001344575026_groups.txt', 'r') as readfile:
         data = json.loads(readfile.read())
         return data['data']
 
@@ -30,13 +30,14 @@ def add_edge(e):
         E.append(e)
 
 def add_group(g):
-    if g not in G:
-        group = Group(g, access_token)
-        G[g] = group
+    id = g['id']
+    if id not in G:
+        group = Group(id, name = g['name'], link = g['link'])
+        G[id] = group
         return group
 
     else:
-        return G.get(g)
+        return G.get(id)
 
 def strength(group1, group2):
     return len(set(group1.members).intersection(set(group2.members)))

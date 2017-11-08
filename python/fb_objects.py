@@ -13,6 +13,8 @@ except ImportError:
 
 from utils import request_until_succeed, unicode_decode
 
+access_token = os.environ.get('INDV_ACCESS_TOKEN')
+
 class Edge:
     def __init__(self, group1, group2, strength):
         """group1 is the group w the lesser id"""
@@ -40,9 +42,10 @@ class Member:
 
 class Group:
 
-    def __init__(self, group_id, access_token):
+    def __init__(self, group_id, name = '', link = ''):
         self.id = group_id
-        self.access_token = access_token 
+        self.name = name
+        self.link = link
         self.members = []
         self.scrapePageSearch()
 
@@ -53,7 +56,7 @@ class Group:
     def getGroupMembersUrl(self):
 
         # Construct the URL string; see http://stackoverflow.com/a/37239851 for
-        url = "https://graph.facebook.com/v2.10/{}/members?access_token={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, self.access_token)
+        url = "https://graph.facebook.com/v2.10/{}/members?access_token={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, access_token)
         return url
 
     def scrapePageSearch(self):
