@@ -32,7 +32,7 @@ def compare_groups(member, groups_dict):
             group2 = dict_to_group(groups_dict.get(str(g2)))
             #Search E for edge e
             #If edge has not been inspected, add to E
-            e = Edge(group1, group2, strength(group1, group2))
+            e = Edge(group1=group1, group2=group2, strength=strength(group1, group2))
             add_edge(e)
 
 if __name__ == '__main__':
@@ -48,9 +48,11 @@ if __name__ == '__main__':
 
     """Dump data to json"""
     data = {}
-    data['nodes'] = groups_dict.keys()
+    data['nodes'] = list(groups_dict.keys())
     data['links'] = [E.get(e) for e in E]
 
+    print(data)
+
     with open("nodes_links.json", 'w') as writefile:
-        json.dump(data, writefile)
+        writefile.write(json.dumps(data))
 

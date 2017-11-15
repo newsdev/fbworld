@@ -26,16 +26,16 @@ class Edge:
                 setattr(self, k, v)
 
         """group1 is the group w the lesser id"""
-        min_id = min(group1.id, group2.id)
-        if min_id == group1.id:
-            self.source = kwargs['group1']
-            self.target = kwargs['group2']
+        min_id = min(kwargs['group1'].id, kwargs['group2'].id)
+        if min_id == kwargs['group1'].id:
+            self.source = kwargs['group1'].__dict__
+            self.target = kwargs['group2'].__dict__
         else:
-            self.source = kwargs['group2']
-            self.target = kwargs['group1']
+            self.source = kwargs['group2'].__dict__
+            self.target = kwargs['group1'].__dict__
 
         self.value = kwargs['strength']
-        self.id = str(self.source.id) + "_" + str(self.target.id) + "_" + str(value)
+        self.id = str(self.source['id']) + "_" + str(self.target['id']) + "_" + str(self.value)
 
     def equals(e):
         if e.id == self.id:
@@ -78,7 +78,8 @@ class Group:
 
     def getGroupMembersUrl(self):
         # Construct the URL string; see http://stackoverflow.com/a/37239851 for
-        url = "https://graph.facebook.com/v2.10/{}/members?ACCESS_TOKEN={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, fbworld.ACCESS_TOKEN)
+        url = "https://graph.facebook.com/v2.10/{}/members?access_token={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, fbworld.ACCESS_TOKEN)
+        print(url)
         return url
 
     def scrapePageSearch(self):

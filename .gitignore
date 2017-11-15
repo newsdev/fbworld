@@ -2,3 +2,4 @@
 *.pyo
 __pycache__
 .vscode
+nodes_links.json
