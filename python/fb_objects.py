@@ -20,14 +20,14 @@ class Edge:
         """group1 is the group w the lesser id"""
         min_id = min(group1.id, group2.id)
         if min_id == group1.id:
-            self.group1 = group1
-            self.group2 = group2
+            self.source = group1
+            self.target = group2
         else:
-            self.group1 = group2
-            self.group2 = group1
+            self.source = group2
+            self.target = group1
 
-        self.strength = strength
-        self.id = str(self.group1.id) + "_" + str(self.group2.id) + "_" + str(strength)
+        self.value = strength
+        self.id = str(self.source.id) + "_" + str(self.target.id) + "_" + str(value)
 
     def equals(e):
         if e.id == self.id:
@@ -48,6 +48,10 @@ class Group:
         self.link = link
         self.members = []
         self.scrapePageSearch()
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o:  o.__dict__,
+            sort_keys=True, indent=4)
 
     def equals(group):
         if group.group_id == self.group_id:

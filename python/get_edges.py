@@ -3,79 +3,56 @@ import json
 import os
 
 from fb_objects import *
+from get_members_dict import create_dict
 
 access_token = os.environ.get('INDV_ACCESS_TOKEN', None)
-file = sys.argv[1]
+members_file = sys.argv[1]
+groups_file = sys.argv[2]
 
-"""G maps <group_id>:<Group object>"""
-G = {} 
-
-"""E_ids is the set of all Edge ids. E is the list of all Edges"""
-E_ids = set()
-E = []
-
-def get_members():
-    with open(file, 'r') as readfile:
-        data = json.loads(readfile.read())
-        return data['data']
-
-def add_edge_2(g1, g2, strength):
-    min_id = min(g1.id, g2.id)
-    max_id = max(g1.id, g2.id)
-    edge = str(min_id) + "," + str(max_id) + "," + str(strength)
-    E_ids.add(edge)
-
-def add_edge(e):
-    if e.id not in E_ids:
-        E_ids.add(e.id)
-        E.append(e)
-
-def add_group(g):
-    id = g['id']
-    if id not in G:
-        group = Group(id, name = g['name'], link = g['link'])
-        G[id] = group
-        return group
-
-    else:
-        return G.get(id)
+"""E maps <edge_id>:Edge object>"""
+E = {}
 
 def strength(group1, group2):
     return len(set(group1.members).intersection(set(group2.members)))
 
-def compare_groups(member):
-    
-    #Search G for group g
-    #If group has not been inspected, add to G
-    for g1_id in member['groups']:
-        member['groups'].remove(g1_id)
-        group1 = add_group(g1_id)
+def add_edge(e):
+    if e.id not in E:
+        E[e.id] = e.__dict__
 
-        for g2_id in member['groups']:
-            group2 = add_group(g2_id)
+def dict_to_group(dict_group):
+    return Group(dict_group['id'], dict_group['name'], dict_group['link'],
+            dict_group['members'])
+
+def compare_groups(member, groups_dict):
+    #Search G for group g.
+    #If group has not been inspected, add to G
+    for g1 in member['groups']:
+        member['groups'].remove(g1)
+        group1 = dict_to_group(groups_dict.get(str(g1)))
+
+        for g2 in member['groups']:
+            group2 = dict_to_group(groups_dict.get(str(g2)))
             #Search E for edge e
             #If edge has not been inspected, add to E
             e = Edge(group1, group2, strength(group1, group2))
-            #add_edge(e)
-            add_edge_2(group1, group2, strength(group1, group2))
-        
-
+            add_edge(e)
 
 if __name__ == '__main__':
 
-    """Get members groups into dictionary"""
-    member_dict = get_members()   
-
+    """Get members and groups into dictionaries"""
+    members_dict = create_dict(members_file)
+    groups_dict = create_dict(groups_file)
+    
     """Compare groups of each member"""
-    for member in member_dict:
-        compare_groups(member)
+    for member in members_dict:
+        compare_groups(member, groups_dict)
 
-    """Dump nodes, edges to json"""
+
+    """Dump data to json"""
     data = {}
-    data['groups'] = list(G.keys())
-    data['edges'] = list(E_ids)
+    data['nodes'] = groups_dict.keys()
+    data['links'] = [E.get(e) for e in E]
 
-    with open("graph.json", 'w') as writefile:
+    with open("nodes_links.json", 'w') as writefile:
         json.dump(data, writefile)
 
-        
