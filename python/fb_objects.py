@@ -42,12 +42,14 @@ class Member:
 
 class Group:
 
-    def __init__(self, group_id, name = '', link = ''):
+    def __init__(self, group_id, name = '', link = '', members = []):
         self.id = group_id
         self.name = name
         self.link = link
-        self.members = []
-        self.scrapePageSearch()
+        self.members = members
+        if (self.members == []) {
+            self.scrapePageSearch()
+        }
 
     def toJSON(self):
         return json.dumps(self, default=lambda o:  o.__dict__,
