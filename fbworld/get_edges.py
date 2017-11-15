@@ -2,10 +2,9 @@ import sys
 import json
 import os
 
-from fb_objects import *
-from get_members_dict import create_dict
+from fbworld.models import Edge, Member, Group
+from fbworld.get_members_dict import create_dict
 
-access_token = os.environ.get('INDV_ACCESS_TOKEN', None)
 members_file = sys.argv[1]
 groups_file = sys.argv[2]
 
@@ -20,8 +19,7 @@ def add_edge(e):
         E[e.id] = e.__dict__
 
 def dict_to_group(dict_group):
-    return Group(dict_group['id'], dict_group['name'], dict_group['link'],
-            dict_group['members'])
+    return Group(**dict_group)
 
 def compare_groups(member, groups_dict):
     #Search G for group g.

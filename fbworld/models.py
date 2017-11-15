@@ -11,42 +11,60 @@ try:
 except ImportError:
     from urllib2 import urlopen, Request
 
-from utils import request_until_succeed, unicode_decode
+import fbworld
+from fbworld.utils import request_until_succeed, unicode_decode
 
-access_token = os.environ.get('INDV_ACCESS_TOKEN')
 
 class Edge:
-    def __init__(self, group1, group2, strength):
+    value = None
+    source = None
+    target = None
+    id = None
+    def __init__(self, *args, **kwargs):
+        for k,v in kwargs.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+
         """group1 is the group w the lesser id"""
         min_id = min(group1.id, group2.id)
         if min_id == group1.id:
-            self.source = group1
-            self.target = group2
+            self.source = kwargs['group1']
+            self.target = kwargs['group2']
         else:
-            self.source = group2
-            self.target = group1
+            self.source = kwargs['group2']
+            self.target = kwargs['group1']
 
-        self.value = strength
+        self.value = kwargs['strength']
         self.id = str(self.source.id) + "_" + str(self.target.id) + "_" + str(value)
 
     def equals(e):
         if e.id == self.id:
             return true
-        
+
+
 class Member:
-    def __init__(self, id, name, administrator, groups):
-        self.id = id
-        self.name = name
-        self.administrator = administrator
-        self.groups = groups
+    id = None
+    name = None
+    administrator = None
+    groups = None
+
+    def __init__(self, *args, **kwargs):
+        for k,v in kwargs.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+
 
 class Group:
+    id = None
+    name = None
+    link = None
+    members = []
 
-    def __init__(self, group_id, name = '', link = ''):
-        self.id = group_id
-        self.name = name
-        self.link = link
-        self.members = []
+    def __init__(self, *args, **kwargs):
+        for k,v in kwargs.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+
         self.scrapePageSearch()
 
     def toJSON(self):
@@ -55,12 +73,12 @@ class Group:
 
     def equals(group):
         if group.group_id == self.group_id:
-            return true
+            return True
+        return False
 
     def getGroupMembersUrl(self):
-
         # Construct the URL string; see http://stackoverflow.com/a/37239851 for
-        url = "https://graph.facebook.com/v2.10/{}/members?access_token={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, access_token)
+        url = "https://graph.facebook.com/v2.10/{}/members?ACCESS_TOKEN={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, fbworld.ACCESS_TOKEN)
         return url
 
     def scrapePageSearch(self):
