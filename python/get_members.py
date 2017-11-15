@@ -5,17 +5,18 @@ import json
 import os
 import sys
 import time
+from fb_objects import *
 
 try:
     from urllib.request import urlopen, Request
 except ImportError:
     from urllib2 import urlopen, Request
 
-from fbworld.models import Edge, Member, Group
-from fbworld.utils import request_until_succeed, unicode_decode
+from utils import request_until_succeed, unicode_decode
 
 """Access token from environment"""
-print(fbworld.ACCESS_TOKEN)
+access_token = os.environ.get('INDV_ACCESS_TOKEN', None) 
+print(access_token)
 
 """Class used to query for a set of groups"""
 def get_group_ids(f):
