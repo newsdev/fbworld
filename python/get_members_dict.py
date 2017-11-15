@@ -13,7 +13,7 @@ G = {}
 def add_group(id):
     if id not in G:
         group = Group(id)
-        G[id] = group.toJSON()
+        G[id] = group.__dict__
         return group
     
 def get_groups(member):
