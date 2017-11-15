@@ -51,8 +51,8 @@ if __name__ == '__main__':
     data['nodes'] = list(groups_dict.keys())
     data['links'] = [E.get(e) for e in E]
 
-    print(data)
-
     with open("nodes_links.json", 'w') as writefile:
         writefile.write(json.dumps(data))
+
+    print("Success! Wrote nodes and links to nodes_links.json")
 
