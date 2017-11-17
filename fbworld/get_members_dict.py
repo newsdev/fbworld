@@ -13,8 +13,7 @@ def add_group(g):
     id = g['id']
     if id not in G:
         group = Group(**g)
-        G[id] = group.__dict__
-        print(G[id])
+        G[id] = group.to_dict()
         return group
     
 def get_groups(member):

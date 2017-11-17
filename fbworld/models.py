@@ -64,14 +64,13 @@ class Group:
         for k,v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
-        if 'members' in kwargs and kwargs['members'] == []:
-            self.scrapePageSearch()
-        elif 'members' not in kwargs:
-            self.scrapePageSearch()
-        print(self.members)
+        self.scrapePageSearch()
+
+    def to_dict(self):
+        return {"id": self.id, "name": self.name, "link": self.link, "members": self.members}
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o:  o.__dict__,
+        return json.dumps(self, default=lambda o:  o.to_dict(),
             sort_keys=True, indent=4)
 
     def equals(group):
@@ -82,7 +81,6 @@ class Group:
     def getGroupMembersUrl(self):
         # Construct the URL string; see http://stackoverflow.com/a/37239851 for
         url = "https://graph.facebook.com/v2.10/{}/members?access_token={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, fbworld.ACCESS_TOKEN)
-        print(url)
         return url
 
     def scrapePageSearch(self):
