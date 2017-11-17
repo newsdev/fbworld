@@ -9,10 +9,12 @@ file_path = sys.argv[1]
 """G maps <group_id>:<Group objects>"""
 G = {}
 
-def add_group(id):
+def add_group(g):
+    id = g['id']
     if id not in G:
-        group = Group(id)
+        group = Group(**g)
         G[id] = group.__dict__
+        print(G[id])
         return group
     
 def get_groups(member):
@@ -41,4 +43,5 @@ if __name__ == '__main__':
     filename = file_path + "_groups.json"
     with open(filename, 'w') as writefile:
         json.dump(data, writefile)
+    print("Success! Groups copied to {}".format(filename))
 

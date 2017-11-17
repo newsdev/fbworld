@@ -28,14 +28,14 @@ class Edge:
         """group1 is the group w the lesser id"""
         min_id = min(kwargs['group1'].id, kwargs['group2'].id)
         if min_id == kwargs['group1'].id:
-            self.source = kwargs['group1'].id
-            self.target = kwargs['group2'].id
+            self.source = str(kwargs['group1'].id)
+            self.target = str(kwargs['group2'].id)
         else:
-            self.source = kwargs['group2'].id
-            self.target = kwargs['group1'].id
+            self.source = str(kwargs['group2'].id)
+            self.target = str(kwargs['group1'].id)
 
         self.value = kwargs['strength']
-        self.id = str(self.source) + "_" + str(self.target) + "_" + str(self.value)
+        self.id = self.source + "_" + self.target + "_" + str(self.value)
 
     def equals(e):
         if e.id == self.id:
@@ -64,8 +64,11 @@ class Group:
         for k,v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
-        if kwargs['members'] == []:
+        if 'members' in kwargs and kwargs['members'] == []:
             self.scrapePageSearch()
+        elif 'members' not in kwargs:
+            self.scrapePageSearch()
+        print(self.members)
 
     def toJSON(self):
         return json.dumps(self, default=lambda o:  o.__dict__,
