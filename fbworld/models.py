@@ -64,9 +64,15 @@ class Group:
         for k,v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
-        self.scrapePageSearch()
+        if 'members' not in kwargs:
+            self.scrapePageSearch()
+        elif kwargs['members'] == []:
+            self.scrapePageSearch()
+        else:
+            print("Already has {} members.".format(str(len(self.members))))
 
     def to_dict(self):
+        print("to_dict " + str(len(self.members)))
         return {"id": self.id, "name": self.name, "link": self.link, "members": self.members}
 
     def toJSON(self):
@@ -101,4 +107,4 @@ class Group:
                 url = raw_members['paging']['next']
             else:
                 has_next_page = False
-
+        print("Group has {} members.".format(str(len(self.members))))
