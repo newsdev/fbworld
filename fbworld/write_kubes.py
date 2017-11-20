@@ -32,7 +32,9 @@ for i in range(n):
     container["name"] = "container-{}".format(str(i))
     container["image"] = "duckduckgo"
     container["command"] = ["scrape-facebook/try-docker-electron/docker-compose", "run", "electron", "bash", "|", "node", "scrape-facebook/try-docker-electron/index.js"]
-    container["environment"] = ",".join(list_lists[i])
+    container["env"] = {}
+    container["env"]["name"] = "USER_IDS"
+    container["env"]["value"] = ",".join(list_lists[i])
     #container["command"] = ["python", "fbworld/fbworld/get_member_dict.py", "{}.txt".format(str(i))]
 
     pod["spec"]["containers"].append(container)
@@ -42,3 +44,5 @@ for i in range(n):
 script["items"] = items
 with open("fbtest.json", "w") as f:
     json.dump(script, f, indent=4)
+
+print("Success! Wrote fbtest.json")
