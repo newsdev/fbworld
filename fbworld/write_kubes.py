@@ -1,8 +1,8 @@
 import json
 import sys
+import os
 
-txts = sys.argv[1:]
-n = len(txts)
+directory = sys.argv[1]
 
 script = {}
 script["apiVersion"] = "v1"
@@ -11,10 +11,13 @@ items = []
 
 """Download all txts into list"""
 list_lists = []
-for txt in txts:
-    with open(txt, 'r') as f: 
-       list_lists.append([line.strip() for line in f]) 
-
+n = 0
+for txt in os.listdir(directory):
+    if txt.endswith(".txt"):
+        with open(directory + "/" + txt, 'r') as f: 
+            list_lists.append([line.strip() for line in f]) 
+            n += 1
+        
 """Set up script"""
 for i in range(n):
 
