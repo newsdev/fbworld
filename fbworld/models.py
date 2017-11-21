@@ -39,6 +39,9 @@ class Edge:
         self.value = kwargs['strength']
         self.id = self.source + "_" + self.target + "_" + str(self.value)
 
+    def to_dict(self):
+        return {"value":self.value, "source":self.source, "target":self.target, "id":self.id}
+
     def equals(e):
         if e.id == self.id:
             return true
@@ -69,12 +72,15 @@ class Group:
             if hasattr(self, k):
                 setattr(self, k, v)
 
-        if kwargs.get('members', None):
+        if len(self.members) == 0:
+            self.scrapePageSearch()
+        """if kwargs.get('members', None):
             print("Group has %s members; adding %s members." % (len(self.members), len(kwargs['members'])))
-            self.members += kwargs['members']
+            #self.members += kwargs['members']
+            self.scrapePageSearch()
 
         if not kwargs.get('members', None):
-            self.scrapePageSearch()
+            self.scrapePageSearch()"""
 
     def get_members(self):
         return list(self.members)
@@ -103,8 +109,8 @@ class Group:
 
         while has_next_page and url is not None:
             raw = dict(json.loads(request_until_succeed(url)))
-            for m in raw['data']:
-                self.members.append(m['id'])
+            members = [m['id'] for m in raw['data']]
+            self.members += members
 
              # if there is no next page, we're done.
             if 'paging' in raw and 'next' in raw['paging']:

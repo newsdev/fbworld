@@ -16,20 +16,15 @@ def main(file_path):
             for g in m['groups']:
                 if not members_of_groups.get(g['id'], None):
                     members_of_groups[g['id']] = []
-
-                new_members = Group(**g).get_members()
-
-                for m in new_members:
-                    members_of_groups[g['id']].append(m)
-
-                print('get_members_dict.main: adding %s groups to %s.' % (len(new_members), g['id']))
-
-
+                
+                new_group = Group(**g).to_dict()
+                members_of_groups[g['id']] = new_group
+    
     print("----- THIS WILL BE THE OUTPUT -----")
     for k,v in members_of_groups.items():
-        print("group %s has %s members" % (k, len(v)))
+        print("group %s has %s members" % (k, len(v['members'])))
+   
     print("----- OUTPUT COMING -----")
-
     payload = {}
     payload['data'] = members_of_groups
     filename = "%s_groups_output.json" % file_path.split('.txt')[0]

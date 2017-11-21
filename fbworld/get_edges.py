@@ -3,7 +3,6 @@ import json
 import os
 
 from fbworld.models import Edge, Member, Group
-from fbworld.get_members_dict import create_dict
 
 members_file = sys.argv[1]
 groups_file = sys.argv[2]
@@ -12,26 +11,25 @@ groups_file = sys.argv[2]
 E = {}
 
 def strength(group1, group2):
-    return len(set(group1.members).intersection(set(group2.members)))
+    return len(set(group1.get_members()).intersection(set(group2.get_members())))
 
 def add_edge(e):
     if e.id not in E:
-        E[e.id] = e.__dict__
+        E[e.id] = e.to_dict()
 
-def dict_to_group(dict_group):
-    return Group(**dict_group)
+def create_dict(file_path):
+    with open(file_path, 'r') as readfile:
+        return json.loads(readfile.read())['data']
 
 def compare_groups(member, groups_dict):
     #Search G for group g.
     #If group has not been inspected, add to G
     for g1 in member['groups']:
-        print(g1['id'])
-        dict = groups_dict.get(g1['id'])
-        group1 = Group(**dict)
+        group1 = Group(**groups_dict.get(g1['id']))
         member['groups'].remove(g1)
 
         for g2 in member['groups']:
-            group2 = dict_to_group(groups_dict.get(g2))
+            group2 = Group(**groups_dict.get(g2['id']))
             #Search E for edge e
             #If edge has not been inspected, add to E
             e = Edge(group1=group1, group2=group2, strength=strength(group1, group2))
@@ -46,7 +44,6 @@ if __name__ == '__main__':
     """Compare groups of each member"""
     for member in members_dict:
         compare_groups(member, groups_dict)
-
 
     """Dump data to json"""
     data = {}
