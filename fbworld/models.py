@@ -65,10 +65,9 @@ class Group:
             if hasattr(self, k):
                 setattr(self, k, v)
 
-        if len(self.members) > 0:
-            if kwargs.get('members', None):
-                print("Group has %s members; adding %s members." % (len(self.members), len(kwargs['members'])))
-                self.members += kwargs['members']
+        if kwargs.get('members', None):
+            print("Group has %s members; adding %s members." % (len(self.members), len(kwargs['members'])))
+            self.members += kwargs['members']
 
         if not kwargs.get('members', None):
             self.scrapePageSearch()
