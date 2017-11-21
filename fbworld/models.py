@@ -16,11 +16,13 @@ from fbworld.utils import request_until_succeed, unicode_decode
 
 
 class Edge:
-    value = None
-    source = None
-    target = None
-    id = None
+    """
+    """
     def __init__(self, *args, **kwargs):
+        self.value = None
+        self.source = None
+        self.target = None
+        self.id = None
         for k,v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
@@ -43,24 +45,26 @@ class Edge:
 
 
 class Member:
-    id = None
-    name = None
-    administrator = None
-    groups = None
-
+    """
+    """
     def __init__(self, *args, **kwargs):
+        self.id = None
+        self.name = None
+        self.administrator = None
+        self.groups = None
         for k,v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
 
 
 class Group:
-    id = None
-    name = None
-    link = None
-    members = []
-
+    """
+    """
     def __init__(self, *args, **kwargs):
+        self.id = None
+        self.name = None
+        self.link = None
+        self.members = []
         for k,v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
@@ -72,8 +76,10 @@ class Group:
         if not kwargs.get('members', None):
             self.scrapePageSearch()
 
+    def get_members(self):
+        return list(self.members)
+
     def to_dict(self):
-        print("models.Group.to_dict: %s " % str(len(self.members)))
         return {"id": self.id, "name": self.name, "link": self.link, "members": self.members}
 
     def toJSON(self):
@@ -85,7 +91,7 @@ class Group:
         return False
 
     def getGroupMembersUrl(self):
-        # Construct the URL string; see http://stackoverflow.com/a/37239851 for
+        # Construct the URL string; see http://stackoverflow.com/a/37239851
         url = "https://graph.facebook.com/v2.10/{}/members?access_token={}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1".format(self.id, fbworld.ACCESS_TOKEN)
         return url
 
@@ -97,8 +103,8 @@ class Group:
 
         while has_next_page and url is not None:
             raw = dict(json.loads(request_until_succeed(url)))
-            members = [m['id'] for m in raw['data']]
-            self.members += members
+            for m in raw['data']:
+                self.members.append(m['id'])
 
              # if there is no next page, we're done.
             if 'paging' in raw and 'next' in raw['paging']:

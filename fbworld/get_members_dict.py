@@ -4,11 +4,7 @@ import os
 
 from fbworld.models import Edge, Member, Group
 
-
-def add_group(group_dict):
-    return list(dict(Group(**group_dict).to_dict())['members'])
-
-def main(file_path, group_lookup, group_list):
+def main(file_path):
 
     members_of_groups = {}
 
@@ -20,8 +16,12 @@ def main(file_path, group_lookup, group_list):
             for g in m['groups']:
                 if not members_of_groups.get(g['id'], None):
                     members_of_groups[g['id']] = []
-                new_members = add_group(g)
-                members_of_groups[g['id']] += new_members
+
+                new_members = Group(**g).get_members()
+
+                for m in new_members:
+                    members_of_groups[g['id']].append(m)
+
                 print('get_members_dict.main: adding %s groups to %s.' % (len(new_members), g['id']))
 
 
@@ -40,7 +40,5 @@ def main(file_path, group_lookup, group_list):
     print("Success! Groups copied to {}".format(filename))
 
 if __name__ == '__main__':
-    group_lookup = {}
-    group_list = []
     file_path = sys.argv[1]
-    main(file_path, group_lookup, group_list)
+    main(file_path)
