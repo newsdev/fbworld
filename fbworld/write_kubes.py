@@ -32,10 +32,11 @@ for i in range(n):
     container["name"] = "container-{}".format(str(i))
     container["image"] = "duckduckgo"
     container["command"] = ["scrape-facebook/try-docker-electron/docker-compose", "run", "electron", "bash", "|", "node", "scrape-facebook/try-docker-electron/index.js"]
-    container["env"] = {}
-    container["env"]["name"] = "USER_IDS"
-    container["env"]["value"] = ",".join(list_lists[i])
-    #container["command"] = ["python", "fbworld/fbworld/get_member_dict.py", "{}.txt".format(str(i))]
+
+    #Define ENV
+    container["env"] = []
+    env_dict = {"name":"USER_IDS", "value":",".join(list_lists[i])}
+    container["env"].append(env_dict)
 
     pod["spec"]["containers"].append(container)
     items.append(pod) 
