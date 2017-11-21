@@ -25,7 +25,7 @@ class Edge:
             if hasattr(self, k):
                 setattr(self, k, v)
 
-        """group1 is the group w the lesser id"""
+        # group1 is the group w the lesser id
         min_id = min(kwargs['group1'].id, kwargs['group2'].id)
         if min_id == kwargs['group1'].id:
             self.source = str(kwargs['group1'].id)
@@ -64,20 +64,21 @@ class Group:
         for k,v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
-        if 'members' not in kwargs:
+
+        if len(self.members) > 0:
+            if kwargs.get('members', None):
+                print("Group has %s members; adding %s members." % (len(self.members), len(kwargs['members'])))
+                self.members += kwargs['members']
+
+        if not kwargs.get('members', None):
             self.scrapePageSearch()
-        elif kwargs['members'] == []:
-            self.scrapePageSearch()
-        else:
-            print("Already has {} members.".format(str(len(self.members))))
 
     def to_dict(self):
-        print("to_dict " + str(len(self.members)))
+        print("models.Group.to_dict: %s " % str(len(self.members)))
         return {"id": self.id, "name": self.name, "link": self.link, "members": self.members}
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o:  o.to_dict(),
-            sort_keys=True, indent=4)
+        return json.dumps(self.to_dict())
 
     def equals(group):
         if group.group_id == self.group_id:
@@ -90,21 +91,20 @@ class Group:
         return url
 
     def scrapePageSearch(self):
-        print("Extracting members of group with id: {}".format(self.id)) 
+        print("models.scrapePageSearch: Extracting members of group with id: {}".format(self.id)) 
         has_next_page = True
         num_processed = 0
         url = self.getGroupMembersUrl()
 
         while has_next_page and url is not None:
-            print(".")
-            raw_members = json.loads(request_until_succeed(url))
-
-            for raw_member in raw_members['data']:
-                self.members.append(raw_member['id'])
+            raw = dict(json.loads(request_until_succeed(url)))
+            members = [m['id'] for m in raw['data']]
+            self.members += members
 
              # if there is no next page, we're done.
-            if 'paging' in raw_members and 'next' in raw_members['paging']:
-                url = raw_members['paging']['next']
+            if 'paging' in raw and 'next' in raw['paging']:
+                url = raw['paging']['next']
             else:
                 has_next_page = False
-        print("Group has {} members.".format(str(len(self.members))))
+
+        print("models.scrapePageSearch: Group has {} members".format(str(len(self.members))))

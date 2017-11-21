@@ -4,56 +4,43 @@ import os
 
 from fbworld.models import Edge, Member, Group
 
-file_path = sys.argv[1]
 
-"""G maps <group_id>:<Group objects>"""
-G = {}
-G_list = []
-def add_group(g):
-    id = g['id']
-    if id not in G:
-        group = Group(**g)
-        print("group initialization members " + str(len(group.members)))
-        for key in G.keys():
-            print("add_group, each key " + str(len(G.get(key)['members'])))
-        G[id] = group.to_dict()
-        for key in G.keys():
-            print("add_group, each key 2" + str(len(G.get(key)['members'])))
-        print("add_group " + str(len(G[id]['members'])))
-        return group
-    
-def get_groups(member):
-    for g in member['groups']:
-        add_group(g) 
-        #HERE th
-        for key in G.keys():
-            print("get_groups " + str(len(G.get(key)['members'])))
+def add_group(group_dict):
+    return list(dict(Group(**group_dict).to_dict())['members'])
 
-def create_dict(file_path):
+def main(file_path, group_lookup, group_list):
+
+    members_of_groups = {}
+
     with open(file_path, 'r') as readfile:
-        data = json.loads(readfile.read())
-        return data['data']
+        members = list(json.loads(readfile.read())['data'])
 
-"""G maps <group_id>:<Group objects>"""
+    for m in members:
+        if m.get('groups', None):
+            for g in m['groups']:
+                if not members_of_groups.get(g['id'], None):
+                    members_of_groups[g['id']] = []
+                new_members = add_group(g)
+                members_of_groups[g['id']] += new_members
+                print('get_members_dict.main: adding %s groups to %s.' % (len(new_members), g['id']))
 
-if __name__ == '__main__':
 
-    """Get members into dictionary memberid:[groups]"""
-    member_dict = create_dict(file_path)
+    print("----- THIS WILL BE THE OUTPUT -----")
+    for k,v in members_of_groups.items():
+        print("group %s has %s members" % (k, len(v)))
+    print("----- OUTPUT COMING -----")
 
-    """Grab groups for each member"""
-    for member in member_dict:
-        get_groups(member)
-#HERE the groups all have 902 members
-    for key in G.keys():
-        print(len(G.get(key)['members']))
+    payload = {}
+    payload['data'] = members_of_groups
+    filename = "%s_groups_output.json" % file_path.split('.txt')[0]
 
-    """Dump dictionary"""
-    data = {}
-    data['data'] = G
-    data['data_list'] = G_list
-    filename = file_path + "_groups.json"
     with open(filename, 'w') as writefile:
-        json.dump(data, writefile)
+        writefile.write(json.dumps(payload))
+
     print("Success! Groups copied to {}".format(filename))
 
+if __name__ == '__main__':
+    group_lookup = {}
+    group_list = []
+    file_path = sys.argv[1]
+    main(file_path, group_lookup, group_list)
