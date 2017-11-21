@@ -27,21 +27,21 @@ class GetMembersDictTestCase(unittest.TestCase):
             self.results = dict(json.loads(readfile.read()))
 
     def test_first_two_groups(self):
-        group_0 = set(self.results['data'].get(key_0)['members'])
-        group_1 = set(self.results['data'].get(key_1)['members'])
+        group_0 = set(self.results['data'].get(self.key_0))
+        group_1 = set(self.results['data'].get(self.key_1))
 
         self.assertFalse(group_0.union(group_1) == group_1)
 
     def test_second_two_groups(self):
         pass
-        # group_1 = set(self.results['data'].get(key_1)['members'])
-        # group_2 = set(self.results['data'].get(key_2)['members'])
+        # group_1 = set(self.results['data'].get(self.key_1))
+        # group_2 = set(self.results['data'].get(self.key_2))
             
         # self.assertFalse(group_1.union(group_2) == group_2)
     
     def test_outer_two_groups(self):
         pass
-        # group_0 = set(self.results['data'].get(key_0)['members'])
-        # group_2 = set(self.results['data'].get(key_2)['members'])
+        # group_0 = set(self.results['data'].get(self.key_0))
+        # group_2 = set(self.results['data'].get(self.key_2))
             
         # self.assertFalse(group_0.union(group_2) == group_2)
